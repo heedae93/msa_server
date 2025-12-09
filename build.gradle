@@ -47,6 +47,9 @@ subprojects {
     // Test 실행 시 JUnit5 사용 설정
     test {
         useJUnitPlatform()
+
+        // (Java 21 이상에서 경고 제거용)
+        jvmArgs("-XX:+EnableDynamicAgentLoading")
     }
 }
 

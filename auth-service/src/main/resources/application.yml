@@ -9,3 +9,9 @@ eureka:
   client:
     service-url:
       defaultZone: http://localhost:8761/eureka/
+
+service:
+  jwt:
+    expiration: 86400000
+    # 👇 아래의 Base64 전용 키로 교체하세요 (밑줄 없음)
+    secret-key: "bXlfc3VwZXJfc2VjcmV0X2tleV9oZWVkYWU5M19tc2FfcHJvamVjdF8xMjM0X2VuY29kZWQ="
