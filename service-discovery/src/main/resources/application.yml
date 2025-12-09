@@ -1,0 +1,11 @@
+server:
+  port: 8761
+
+spring:
+  application:
+    name: service-discovery
+
+eureka:
+  client:
+    register-with-eureka: false #자기 자신이니가 등록하지 않음
+    fetch-registry: false #자기 자신이니까 레지스트리를 가져올 필요 없음

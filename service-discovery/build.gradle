@@ -1,0 +1,4 @@
+dependencies {
+    // 유레카 서버 의존성 (버전은 부모가 관리하므로 생략)
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-server'
+}

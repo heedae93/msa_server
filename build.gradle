@@ -1,0 +1,55 @@
+plugins {
+    id 'java'
+    // Spring Boot 플러그인 (버전은 최신 안정 버전 사용)
+    id 'org.springframework.boot' version '3.2.3'
+    // 의존성 관리 플러그인 (BOM 사용을 위해 필수)
+    id 'io.spring.dependency-management' version '1.1.4'
+}
+
+// 1. 모든 프로젝트(Root + Sub)에 공통 적용
+allprojects {
+    group = 'com.example'
+    version = '0.0.1-SNAPSHOT'
+
+    repositories {
+        mavenCentral()
+    }
+}
+
+// 2. 하위 모듈(Sub-projects)들에만 적용할 설정
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'io.spring.dependency-management'
+
+    sourceCompatibility = '21'
+
+    // Spring Cloud 버전 변수 설정 (Spring Boot 3.2.x 호환 버전)
+    ext {
+        set('springCloudVersion', "2023.0.0")
+    }
+
+    // 의존성 관리 (BOM Import)
+    // 이걸 해두면 하위 모듈에서 버전을 안 적어도 알아서 호환되는 버전을 가져옴
+    dependencyManagement {
+        imports {
+            mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+        }
+    }
+
+    dependencies {
+        // 모든 모듈이 기본적으로 가질 라이브러리 (Lombok, Test)
+        compileOnly 'org.projectlombok:lombok'
+        annotationProcessor 'org.projectlombok:lombok'
+        testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    }
+
+    // Test 실행 시 JUnit5 사용 설정
+    test {
+        useJUnitPlatform()
+    }
+}
+
+
+
+
