@@ -1,0 +1,7 @@
+dependencies {
+    // 1. 컨피그 서버 핵심
+    implementation 'org.springframework.cloud:spring-cloud-config-server'
+
+    // 2. 유레카 클라이언트 (Config Server도 유레카에 등록하면 찾기 쉬움)
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+}

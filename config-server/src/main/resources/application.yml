@@ -1,0 +1,50 @@
+server:
+  port: 8888
+
+spring:
+  application:
+    name: config-server
+
+  cloud:
+    config:
+      server:
+        git:
+          # [중요 1] 설정 파일(.yml)들만 모아둔 '별도의 리포지토리' 주소
+          uri: https://github.com/heedae93/my_msa_config.git
+
+          # 바라볼 브랜치 (main 또는 master)
+          default-label: main
+
+          # 강제로 pull 하여 최신 설정 유지
+          force-pull: true
+
+          # [중요 2] Private 리포지토리 접근을 위한 인증 정보
+          # 실제 값은 하드코딩하지 않고 환경변수(${...})로 주입받는 것이 보안 정석입니다.
+          username: ${GIT_USERNAME}
+          password: ${GIT_TOKEN}    # GitHub Token (Classic)
+
+# ====================================================
+# [Profile: default]
+# 로컬(IntelliJ)에서 실행할 때 적용되는 설정
+# ====================================================
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+
+---
+# ====================================================
+# [Profile: docker]
+# 도커 컴포즈환경에서 실행할 때 적용되는 설정
+# (Docker 내부에서는 'localhost'가 아니라 '컨테이너 이름'으로 통신해야 함)
+# ====================================================
+spring:
+  config:
+    activate:
+      on-profile: docker
+
+eureka:
+  client:
+    service-url:
+      # 'service-discovery'는 docker-compose.yml에 작성할 컨테이너 이름이어야 함
+      defaultZone: http://service-discovery:8761/eureka/

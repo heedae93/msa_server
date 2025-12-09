@@ -6,3 +6,5 @@ include 'user-service'
 
 include 'service-discovery'
 include 'api-gateway'
+include 'api-gateway:config-server'
+include 'config-server'
