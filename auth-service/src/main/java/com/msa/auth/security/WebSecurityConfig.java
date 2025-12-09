@@ -11,11 +11,11 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // CSRF 비활성화 (Rest API는 안 씀)
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/actuator/**").permitAll() // 로그인 경로는 허용
-                        .anyRequest().authenticated()
-                );
+        .csrf(csrf -> csrf.disable()) // CSRF 비활성화 (Rest API는 안 씀)
+        .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/login", "/actuator/**").permitAll() // 로그인 경로는 허용
+                .anyRequest().authenticated()
+        );
 
         return http.build();
     }
