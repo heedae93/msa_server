@@ -1,0 +1,21 @@
+server:
+  port: 8000
+
+spring:
+  application:
+    name: api-gateway # 유레카에 등록될 이름
+
+  cloud:
+    gateway:
+      # 나중에 CORS(프론트엔드 연동) 설정 추가 예정
+      discovery:
+        locator:
+          enabled: true # 유레카에 등록된 서비스 이름으로 자동 라우팅
+          lower-case-service-id: true # 서비스 이름을 소문자로 인식 (User-Service -> user-service)
+
+eureka:
+  client:
+    register-with-eureka: true #  유레카에 등록
+    fetch-registry: true       # 다른 서비스 목록을 받아온다
+    service-url:
+      defaultZone: http://localhost:8761/eureka/ # 유레카 서버 주소
