@@ -1,0 +1,9 @@
+# 모든 텍스트 파일은 OS에 맞춰 자동 변환 (기본)
+* text=auto
+
+# 윈도우용 배치 파일은 무조건 CRLF 유지
+*.bat text eol=crlf
+
+# 리눅스/맥용 쉘 스크립트는 무조건 LF 유지
+*.sh text eol=lf
+gradlew text eol=lf
