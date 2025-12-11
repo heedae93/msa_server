@@ -22,6 +22,10 @@ app.add_middleware(
 # 모델 로드 (생략 - 기존과 동일)
 model = YOLO('yolov8n-cls.pt')
 
+@app.get("/")
+def home():
+    return {"message": "멍멍! 강아지 감정 분석 AI 서버가 정상 작동 중입니다. 🟢"}
+
 @app.post("/analyze")
 async def analyze_dog(file: UploadFile = File(...)):
     # 3. 파일 검증 (이미지가 아니면 거절)
