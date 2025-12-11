@@ -40,3 +40,9 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+
+
+.venv/
+.idea/
+__pycache__/
+*.pt
