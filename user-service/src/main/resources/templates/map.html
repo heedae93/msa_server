@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>강아지 운동장 지도</title>
+    <style>
+        #map {
+            height: 600px;
+            width: 100%;
+        }
+    </style>
+    <script th:src="@{'https://maps.googleapis.com/maps/api/js?key=' + ${@environment.getProperty('external.map.api-key')}}"></script>
+</head>
+<body>
+<h1>🐾 주변 강아지 운동장 찾기</h1>
+<p>현재 위치를 기준으로 주변 운동장 정보를 지도에 표시합니다.</p>
+
+<div id="map"></div>
+
+<script>
+    // API Gateway 주소 (현재 환경에서는 localhost:8000)
+    const GATEWAY_URL = 'http://localhost:8000';
+
+    // 🚨 임시 토큰 설정 (수동으로 획득한 유효한 JWT 토큰으로 교체해야 합니다!)
+    const DUMMY_JWT_TOKEN = '여기에_유효한_JWT_토큰을_수동으로_넣어주세요';
+
+    // 지도 객체
+    let map;
+
+    function initMap() {
+        // 지도 초기 위치: 서울 (예시)
+        const initialLocation = { lat: 37.5665, lng: 126.9780 };
+
+        map = new google.maps.Map(document.getElementById('map'), {
+            center: initialLocation,
+            zoom: 12,
+        });
+
+        // 초기 위치의 위도, 경도를 API 요청에 사용
+        const locationString = `${initialLocation.lat},${initialLocation.lng}`;
+        fetchDogParks(locationString);
+    }
+
+    function fetchDogParks(locationString) {
+        const url = `${GATEWAY_URL}/user/dog-parks?location=${locationString}`;
+
+        fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                // 🚨 Gateway JWT 필터가 요구하는 토큰을 전송합니다.
+                'Authorization': `Bearer ${DUMMY_JWT_TOKEN}`
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            } else if (response.status === 401) {
+                alert('인증 실패! JWT 토큰을 확인해주세요.');
+                throw new Error('Unauthorized');
+            } else {
+                alert('데이터 로딩 실패');
+                throw new Error('Failed to load data');
+            }
+        })
+        .then(data => {
+            if (data.results) {
+                data.results.forEach(place => {
+                    addMarker(place);
+                });
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+
+    function addMarker(place) {
+        const position = {
+            lat: place.geometry.location.lat,
+            lng: place.geometry.location.lng
+        };
+
+        new google.maps.Marker({
+            map: map,
+            position: position,
+            title: place.name
+        });
+    }
+
+    // 🚨 지도가 로드되면 initMap 함수를 호출하도록 설정
+    window.initMap = initMap;
+</script>
+</body>
+</html>

@@ -16,4 +16,8 @@ dependencies {
 
     // 5. 테스트
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
+    implementation 'org.springframework.boot:spring-boot-starter-security'
 }
