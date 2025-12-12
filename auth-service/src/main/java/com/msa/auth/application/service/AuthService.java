@@ -26,14 +26,14 @@ public class AuthService implements LoginUseCase, RegisterUseCase { // 인터페
     @Override
     @Transactional(readOnly = true)
     public String login(LoginRequestDto command) {
-        User user = loadUserPort.loadUser(command.getUsername())
+        User user = loadUserPort.loadUser(command.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
 
         if (!passwordEncoder.matches(command.getPassword(), user.getPassword())) {
             throw new IllegalArgumentException("비밀번호 불일치");
         }
 
-        return tokenProviderPort.createToken(user.getUsername(), user.getRole().name());
+        return tokenProviderPort.createToken(user.getEmail(), user.getRole().name());
     }
 
     // 👇 회원가입 로직 추가
@@ -50,10 +50,10 @@ public class AuthService implements LoginUseCase, RegisterUseCase { // 인터페
 
         // 3. 도메인 객체 생성 (User 생성자 필요)
         User newUser = new User(
-                command.getEmail(),     // username으로 사용
+                command.getEmail(),
                 encodedPassword,
-                command.getUsername(),  // nickname 등으로 사용
-                UserRole.USER           // 기본 권한
+                command.getUsername(),
+                UserRole.USER
         );
 
         // 4. 포트를 통해 저장

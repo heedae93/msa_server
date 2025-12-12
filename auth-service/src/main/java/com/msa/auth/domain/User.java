@@ -16,14 +16,14 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // ★ 중요: 여기를 로그인용 ID(이메일)로 사용합니다.
+    // 🚨 [수정] username 대신 email 필드를 사용합니다. (로그인 ID 역할)
     @Column(nullable = false, unique = true, length = 50)
-    private String username;
+    private String email;
 
     @Column(nullable = false)
     private String password;
 
-    // 👇 [추가됨] 사용자의 실제 이름이나 닉네임을 저장할 필드
+    // 🚨 [추가] 닉네임 필드는 그대로 유지합니다.
     @Column(nullable = false, length = 50)
     private String nickname;
 
@@ -32,11 +32,13 @@ public class User {
     private UserRole role;
 
     @Builder
-    // 👇 생성자에도 String nickname을 추가해서 순서를 맞춰줍니다. (순서 중요!)
-    public User(String username, String password, String nickname, UserRole role) {
-        this.username = username;
+    // 🚨 [수정] 생성자 순서와 이름 변경 (email, password, nickname, role 순)
+    public User(String email, String password, String nickname, UserRole role) {
+        this.email = email;
         this.password = password;
-        this.nickname = nickname; // 추가된 필드 저장
+        this.nickname = nickname;
         this.role = role;
     }
+
+    // (이전 코드에서 사용하던 getter/setter는 Lombok이 처리)
 }

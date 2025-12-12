@@ -52,7 +52,7 @@ class AuthServiceTest {
 
         // 가짜 DB에서 꺼내올 유저 객체 생성
         User mockUser = User.builder()
-                .username(username)
+                .email(username)
                 .password(encodedPassword)
                 .role(UserRole.USER)
                 .build();
@@ -101,7 +101,7 @@ class AuthServiceTest {
         ReflectionTestUtils.setField(requestDto, "password", password);
 
         User mockUser = User.builder()
-                .username(username)
+                .email(username)
                 .password(encodedPassword)
                 .role(UserRole.USER)
                 .build();
