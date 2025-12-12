@@ -1,0 +1,27 @@
+server:
+  port: 8880 # 🚨 auth-service(8889)와 충돌하지 않는 새 포트 지정
+
+spring:
+  application:
+    name: user-service # 🚨 유레카에 등록될 ID (Gateway가 사용할 이름)
+
+  # H2 DB 설정 (각 서비스마다 독립된 인메모리 DB 사용)
+  datasource:
+    url: jdbc:h2:mem:userdb
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+
+# Config Server 연동 설정 (필요하다면 추가)
+# spring:
+#   config:
+#     import: "optional:configserver:http://localhost:8888/"

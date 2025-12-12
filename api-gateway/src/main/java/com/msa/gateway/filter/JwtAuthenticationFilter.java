@@ -1,5 +1,6 @@
 package com.msa.gateway.filter; // 게이트웨이 모듈에 맞게 경로 설정
 
+import com.msa.gateway.util.JwtUtil;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,9 +28,9 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
 
     // 🚨 인증 없이 통과시킬 경로 목록 (로그인, 회원가입, 뷰 페이지 등)
     private static final List<String> EXCLUDED_PATHS = List.of(
-            "/auth-service/auth/login",
-            "/auth-service/auth/signup",
-            "/auth-service/view" // view 경로도 통과
+            "/auth/login",
+            "/auth/signup",
+            "/view"
     );
 
     @Override
@@ -81,7 +82,8 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
     // --- 헬퍼 메서드 ---
 
     private boolean isExcluded(String path) {
-        return EXCLUDED_PATHS.stream().anyMatch(path::contains);
+        // 요청 경로가 /auth/login 또는 /view/ 로 시작하는지 확인
+        return EXCLUDED_PATHS.stream().anyMatch(path::startsWith) || path.startsWith("/view");
     }
 
     private String resolveToken(HttpHeaders headers) {

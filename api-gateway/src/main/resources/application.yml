@@ -7,7 +7,35 @@ spring:
 
   cloud:
     gateway:
-      # 나중에 CORS(프론트엔드 연동) 설정 추가 예정
+      routes:
+        # 1. Auth VIEW 경로 (예: /view/signup, /view/login)
+        - id: auth-view-route
+          uri: lb://auth-service
+          predicates:
+            - Path=/view/** # Gateway가 /view/ 로 시작하는 요청을 받음
+          filters:
+            # 🚨 [핵심] /view/ 아래의 모든 경로를 캡처하여, 서비스에 그대로 /view/ 로 전달
+            - RewritePath=/view/(?<segment>.*), /view/${segment}
+
+        # 2. Auth API 경로 (예: /auth/signup, /auth/login)
+        - id: auth-api-route
+          uri: lb://auth-service
+          predicates:
+            - Path=/auth/**
+          filters:
+            # 🚨 /auth/ 아래의 모든 경로를 캡처하여, 서비스에 그대로 /auth/ 로 전달
+            - RewritePath=/auth/(?<segment>.*), /auth/${segment}
+
+        - id: user-api-route
+            # 🚨 서비스 ID는 user-service (소문자)
+          uri: lb://user-service
+          predicates:
+            # /user 로 시작하는 모든 요청을 user-service로 보냄
+            - Path=/user/**
+          filters:
+            # /user/ 아래의 경로를 캡처하여, 서비스에 그대로 /user/ 로 전달
+            - RewritePath=/user/(?<segment>.*), /user/${segment}
+
       discovery:
         locator:
           enabled: true # 유레카에 등록된 서비스 이름으로 자동 라우팅
@@ -19,3 +47,14 @@ eureka:
     fetch-registry: true       # 다른 서비스 목록을 받아온다
     service-url:
       defaultZone: http://localhost:8761/eureka/ # 유레카 서버 주소
+
+service:
+  jwt:
+    expiration: 86400000
+    # 👇 아래의 Base64 전용 키로 교체하세요 (밑줄 없음)
+    secret-key: "bXlfc3VwZXJfc2VjcmV0X2tleV9oZWVkYWU5M19tc2FfcHJvamVjdF8xMjM0X2VuY29kZWQ="
+
+# application.yml에 추가
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG # 🚨 이 설정이 DEBUG여야 합니다.

@@ -1,9 +1,9 @@
-package com.msa.auth.adapter.out.jwt;
+package com.msa.gateway.util;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import lombok.extern.slf4j.Slf4j; // 로그를 위해 추가
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
