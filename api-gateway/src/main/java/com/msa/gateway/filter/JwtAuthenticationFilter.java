@@ -82,8 +82,10 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
     // --- 헬퍼 메서드 ---
 
     private boolean isExcluded(String path) {
-        // 요청 경로가 /auth/login 또는 /view/ 로 시작하는지 확인
-        return EXCLUDED_PATHS.stream().anyMatch(path::startsWith) || path.startsWith("/view");
+        // 요청 경로가 /auth/login, /view/ 등으로 시작하는지 확인
+        return EXCLUDED_PATHS.stream().anyMatch(path::startsWith)
+                || path.startsWith("/view")  // 모든 view 페이지 허용
+                || path.startsWith("/user/dog-parks"); // 🚨 [추가] 지도 API 허용
     }
 
     private String resolveToken(HttpHeaders headers) {
