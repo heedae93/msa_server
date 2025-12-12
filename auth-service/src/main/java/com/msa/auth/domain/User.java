@@ -8,29 +8,35 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Table(name = "users") // DB 테이블 이름 ('user'는 예약어인 DB가 많아서 users로 설정)
-@NoArgsConstructor(access = AccessLevel.PROTECTED) // JPA용 기본 생성자 (보안상 protected 권장)
+@Table(name = "users")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // ★ 중요: 여기를 로그인용 ID(이메일)로 사용합니다.
     @Column(nullable = false, unique = true, length = 50)
     private String username;
 
     @Column(nullable = false)
     private String password;
 
-    @Enumerated(EnumType.STRING) // DB에 숫자가 아니라 "USER", "ADMIN" 문자열로 저장
+    // 👇 [추가됨] 사용자의 실제 이름이나 닉네임을 저장할 필드
+    @Column(nullable = false, length = 50)
+    private String nickname;
+
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private UserRole role;
 
-    // 객체 생성은 안전하게 Builder 패턴 사용
     @Builder
-    public User(String username, String password, UserRole role) {
+    // 👇 생성자에도 String nickname을 추가해서 순서를 맞춰줍니다. (순서 중요!)
+    public User(String username, String password, String nickname, UserRole role) {
         this.username = username;
         this.password = password;
+        this.nickname = nickname; // 추가된 필드 저장
         this.role = role;
     }
 }
