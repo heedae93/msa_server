@@ -8,53 +8,67 @@ spring:
   cloud:
     gateway:
       routes:
-        # 1. Auth VIEW 경로 (예: /view/signup, /view/login)
+        # 1. Auth VIEW 경로 (토큰 필요 없는 페이지, 충돌 방지를 위해 명시적 경로 사용)
         - id: auth-view-route
           uri: lb://auth-service
           predicates:
-            - Path=/view/** # Gateway가 /view/ 로 시작하는 요청을 받음
-          filters:
-            # 🚨 [핵심] /view/ 아래의 모든 경로를 캡처하여, 서비스에 그대로 /view/ 로 전달
-            - RewritePath=/view/(?<segment>.*), /view/${segment}
+            - Path=/view/signup
+            - Path=/view/login
+          # 필터는 RewritePath 없이 Path 그대로 전달
 
-        # 2. Auth API 경로 (예: /auth/signup, /auth/login)
+        # 2. User VIEW 경로 (강아지 지도 페이지, 충돌 방지를 위해 명시적 경로 사용)
+        - id: user-view-route
+          uri: lb://user-service
+          predicates:
+            - Path=/view/map
+          # /view/map 요청을 user-service의 /view/map으로 그대로 전달
+#          filters:
+#            - RewritePath=/view/map(?<segment>/?.*), /view/map$segment
+
+        # 3. Auth API 경로 (로그인, 회원가입 등)
         - id: auth-api-route
           uri: lb://auth-service
           predicates:
             - Path=/auth/**
+          # /auth/ 이후의 경로를 서비스에 전달
           filters:
-            # 🚨 /auth/ 아래의 모든 경로를 캡처하여, 서비스에 그대로 /auth/ 로 전달
             - RewritePath=/auth/(?<segment>.*), /auth/${segment}
 
+        # 4. User API 경로 (마이페이지, 지도 데이터 요청 등, JWT 검증 필요)
         - id: user-api-route
-            # 🚨 서비스 ID는 user-service (소문자)
           uri: lb://user-service
           predicates:
-            # /user 로 시작하는 모든 요청을 user-service로 보냄
             - Path=/user/**
+          # /user/ 이후의 경로를 서비스에 전달
           filters:
-            # /user/ 아래의 경로를 캡처하여, 서비스에 그대로 /user/ 로 전달
             - RewritePath=/user/(?<segment>.*), /user/${segment}
+
+        # 5. AI Service 라우팅 (미래를 위해 남겨둠)
+        - id: ai-route
+          uri: lb://ai-service
+          predicates:
+            - Path=/ai/**
+          filters:
+            - RewritePath=/ai/(?<segment>.*), /ai/${segment}
 
       discovery:
         locator:
-          enabled: true # 유레카에 등록된 서비스 이름으로 자동 라우팅
-          lower-case-service-id: true # 서비스 이름을 소문자로 인식 (User-Service -> user-service)
+          enabled: true
+          lower-case-service-id: true
 
 eureka:
   client:
-    register-with-eureka: true #  유레카에 등록
-    fetch-registry: true       # 다른 서비스 목록을 받아온다
+    register-with-eureka: true
+    fetch-registry: true
     service-url:
-      defaultZone: http://localhost:8761/eureka/ # 유레카 서버 주소
+      defaultZone: http://localhost:8761/eureka/
 
 service:
   jwt:
     expiration: 86400000
-    # 👇 아래의 Base64 전용 키로 교체하세요 (밑줄 없음)
     secret-key: "bXlfc3VwZXJfc2VjcmV0X2tleV9oZWVkYWU5M19tc2FfcHJvamVjdF8xMjM0X2VuY29kZWQ="
 
-# application.yml에 추가
+# 디버깅을 위한 로그 레벨 설정
 logging:
   level:
-    org.springframework.cloud.gateway: DEBUG # 🚨 이 설정이 DEBUG여야 합니다.
+    org.springframework.cloud.gateway: DEBUG
