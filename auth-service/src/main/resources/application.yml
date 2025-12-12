@@ -1,9 +1,24 @@
+server:
+  port : 88889
+
 spring:
   application:
     name: auth-service
 
   config:
     import: "optional:configserver:http://localhost:8888/"
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+  datasource:
+    # 🚨 DB 연결 정보 명시
+    url: jdbc:h2:mem:authdb  # 'authdb'로 이름을 지정하는 것을 추천합니다.
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
 
 eureka:
   client:

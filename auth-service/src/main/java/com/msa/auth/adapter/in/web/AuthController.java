@@ -21,7 +21,7 @@ public class AuthController {
     private final LoginUseCase loginUseCase;
 
     // 👇 4. [추가됨] 회원가입 API (실제 주소: POST /auth/signup)
-    @PostMapping("/signup")
+    @PostMapping("/auth/signup")
     public ResponseEntity<String> signup(@RequestBody SignupRequestDto request) {
         registerUseCase.registerUser(request);
         return ResponseEntity.ok("회원가입 성공!");
