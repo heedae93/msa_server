@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor // 기본 생성자 (JSON -> 객체 변환 시 필수)
 public class LoginRequestDto {
 
-    private String username;
+    private String email;
     private String password;
 
 

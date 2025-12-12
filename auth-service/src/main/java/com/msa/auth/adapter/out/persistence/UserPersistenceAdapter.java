@@ -18,8 +18,8 @@ public class UserPersistenceAdapter implements LoadUserPort, SaveUserPort {
     private final UserRepository userRepository; // 실제 JPA 레포지토리
 
     @Override
-    public Optional<User> loadUser(String username) {
-        return userRepository.findByUsername(username);
+    public Optional<User> loadUser(String email) {
+        return userRepository.findByEmail(email);
     }
 
     @Override

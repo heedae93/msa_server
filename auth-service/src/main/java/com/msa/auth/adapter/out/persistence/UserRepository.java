@@ -8,6 +8,6 @@ import java.util.Optional;
 // 오직 같은 패키지에 있는 UserPersistenceAdapter만 갖다 씁니다.
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    Optional<User> findByUsername(String username);
+    Optional<User> findByEmail(String email);
 
 }
