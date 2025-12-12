@@ -1,7 +1,9 @@
 package com.msa.auth.adapter.in.web;
 
 import com.msa.auth.adapter.in.web.dto.LoginRequestDto;
+import com.msa.auth.adapter.in.web.dto.SignupRequestDto;
 import com.msa.auth.application.port.in.LoginUseCase;
+import com.msa.auth.application.port.in.RegisterUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -14,8 +16,16 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class AuthController {
 
-    // 서비스의 구체적인 이름은 몰라도 됨. "로그인 기능(UseCase)"만 있으면 됨.
+    // 서비스의 구체적인 이름은 몰라도 됨. "UseCase"만 있으면 됨.
+    private final RegisterUseCase registerUseCase;
     private final LoginUseCase loginUseCase;
+
+    // 👇 4. [추가됨] 회원가입 API (실제 주소: POST /auth/signup)
+    @PostMapping("/signup")
+    public ResponseEntity<String> signup(@RequestBody SignupRequestDto request) {
+        registerUseCase.registerUser(request);
+        return ResponseEntity.ok("회원가입 성공!");
+    }
 
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> login(@RequestBody LoginRequestDto request) {
