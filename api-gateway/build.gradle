@@ -1,9 +1,14 @@
 dependencies {
     // 1. 게이트웨이 핵심 라이브러리 (WebFlux 기반)
+    // ⚠️ 주의: spring-boot-starter-web 은 절대 넣으면 안 됨! (충돌남)
     implementation 'org.springframework.cloud:spring-cloud-starter-gateway'
 
     // 2. 유레카 클라이언트 (유레카 서버를 찾아가기 위함)
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
 
-    // ⚠️ 주의: spring-boot-starter-web 은 절대 넣으면 안 됨! (충돌남)
+
+
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 }

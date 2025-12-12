@@ -1,0 +1,19 @@
+dependencies {
+    // 1. 웹 & 보안 (JWT 필터는 Gateway가 처리하므로, 여기서는 Security는 제외)
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-validation' // 유효성 검사
+
+    // 2. MSA (Eureka)
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+
+    // 3. JPA (DB 연결)
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    runtimeOnly 'com.h2database:h2' // 임시 DB
+
+    // 4. Lombok
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // 5. 테스트
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
