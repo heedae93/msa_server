@@ -33,7 +33,7 @@
             throw new Error('로그인 실패!');
         })
         .then(data => {
-            alert("로그인 성공! 발급된 토큰:\n" + data.accessToken);
+            alert("로그인 성공! 발급된 토큰:\n" + data.token);
             console.log("Access Token:", data.accessToken);
             // 토큰을 로컬스토리지에 저장 (나중에 React Native도 이렇게 함)
             localStorage.setItem('accessToken', data.accessToken);
