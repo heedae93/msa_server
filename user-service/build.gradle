@@ -2,7 +2,7 @@ dependencies {
     // 1. 웹 & 보안 (JWT 필터는 Gateway가 처리하므로, 여기서는 Security는 제외)
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-validation' // 유효성 검사
-
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
     // 2. MSA (Eureka)
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
 

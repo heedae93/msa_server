@@ -22,8 +22,8 @@ spring:
           predicates:
             - Path=/view/map
           # /view/map 요청을 user-service의 /view/map으로 그대로 전달
-#          filters:
-#            - RewritePath=/view/map(?<segment>/?.*), /view/map$segment
+        #          filters:
+        #            - RewritePath=/view/map(?<segment>/?.*), /view/map$segment
 
         # 3. Auth API 경로 (로그인, 회원가입 등)
         - id: auth-api-route
