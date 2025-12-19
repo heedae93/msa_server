@@ -28,9 +28,7 @@ eureka:
 
 external:
   map:
-    # 🚨 [필수] Naver Cloud Platform에서 발급받은 Client ID와 Secret으로 교체
-    naver-client-id: "3c4dnoqz3r"
-    naver-client-secret: "ysgKov67IwCmyNlxJA9CyM5n6HFsiStSmVu2dekx"
-
-    # Naver 지역 검색 API (장소 검색을 위해 사용)
-    naver-search-url: "https://openapi.naver.com/v1/search/local.json"
+    # 🚨 카카오 개발자 센터의 'REST API 키'를 입력하세요
+    kakao-rest-api-key: "46e59bc563dc3e94f3cd7b05ceae44e5"
+    # 카카오 키워드 검색 API 주소
+    kakao-search-url: "https://dapi.kakao.com/v2/local/search/keyword.json"
