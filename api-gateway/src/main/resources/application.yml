@@ -40,8 +40,8 @@ spring:
           predicates:
             - Path=/user/**
           # /user/ 이후의 경로를 서비스에 전달
-          filters:
-            - RewritePath=/user/(?<segment>.*), /user/${segment}
+#          filters:
+#            - RewritePath=/user/(?<segment>.*), /user/${segment}
 
         # 5. AI Service 라우팅 (미래를 위해 남겨둠)
         - id: ai-route

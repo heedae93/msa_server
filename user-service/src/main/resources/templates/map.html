@@ -6,7 +6,6 @@
     <style>
         body { margin: 0; padding: 0; font-family: Arial, sans-serif; }
         .container { max-width: 1200px; margin: 20px auto; padding: 0 20px; }
-        h1 { color: #4CAF50; border-bottom: 2px solid #eee; padding-bottom: 10px; }
         #map {
             height: 600px;
             width: 100%;
@@ -22,118 +21,99 @@
         }
     </style>
 
-    <script th:src="@{'https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=' + ${@environment.getProperty('external.map.naver-client-id')}}"></script>
+    <script type="text/javascript" src="//dapi.kakao.com/..."></script>
 
+    <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=7367f6d7815b12dea7f6cd612681bd74&libraries=services&autoload=false"></script>
 </head>
-<body onload="initMap()">
+<body>
 
 <div class="container">
-    <h1>🐾 주변 강아지 운동장 찾기</h1>
     <div id="loading-message">지도를 로드하는 중입니다... 잠시만 기다려 주세요.</div>
     <div id="map"></div>
 </div>
 
 <script>
-    // MSA 환경 설정
     const GATEWAY_URL = 'http://localhost:8000';
-
-    // 🚨 [제거] JWT_TOKEN 변수 제거
-
     let map;
 
-    /**
-     * 1. Naver 지도 객체를 초기화합니다. (API가 로드된 후 실행)
-     */
     function initMap() {
-        // 🚨 [변경] Naver 지도 API 사용
-        const initialLocation = new naver.maps.LatLng(37.5665, 126.9780); // 서울 시청 기준
+        // kakao 객체가 로드될 때까지 기다림
+        kakao.maps.load(function() {
+            console.log("카카오 지도 SDK 로드 완료");
 
-        map = new naver.maps.Map('map', { // 'map'은 div ID
-            center: initialLocation,
-            zoom: 12,
+            const container = document.getElementById('map');
+            const options = {
+                center: new kakao.maps.LatLng(37.5665, 126.9780), // 서울 시청 기준
+                level: 5
+            };
+
+            map = new kakao.maps.Map(container, options);
+            document.getElementById('loading-message').style.display = 'none';
+
+            // 데이터 로드 호출
+            fetchDogParks();
         });
-
-        document.getElementById('loading-message').style.display = 'none';
-
-        // 2. 초기 위치를 기반으로 API 호출
-        // Naver 지역 검색 API는 location 대신 keyword 검색을 사용하므로,
-        // locationString은 서비스에서 적절히 처리됩니다.
-        const locationString = `${initialLocation.lat()},${initialLocation.lng()}`;
-        fetchDogParks(locationString);
     }
 
-    /**
-     * 2. Gateway를 통해 user-service의 헥사고날 API를 호출합니다.
-     * (GET /user/dog-parks)
-     */
-    function fetchDogParks(locationString) {
-        const url = `${GATEWAY_URL}/user/dog-parks?location=${locationString}`;
+    function fetchDogParks() {
+        // 테스트를 위해 고정 좌표 전달
+        const url = `${GATEWAY_URL}/user/dog-parks?location=37.5665,126.9780`;
 
-        fetch(url, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                // 🚨 [제거] Authorization 헤더 제거
-            }
-        })
+        fetch(url)
         .then(response => {
-            // 🚨 [수정] 토큰 검증 로직이 Gateway에서 제거되었으므로,
-            // 401 에러는 Gateway 문제가 아니라 API 키 문제일 가능성이 높아짐
-            if (response.ok) {
-                return response.json();
-            }
-            // 외부 API 호출 실패 (500) 등
-            throw new Error(`API call failed with status: ${response.status}`);
+            if (response.ok) return response.json();
+            throw new Error(`API 호출 실패: ${response.status}`);
         })
         .then(data => {
-            // 🚨 [변경] Naver 지역 검색 API 응답 형식에 맞게 데이터 처리
-            if (data.items) {
-                data.items.forEach(place => {
+            console.log("받은 데이터:", data); // 🚨 콘솔에서 데이터가 어떻게 오는지 꼭 확인하세요!
+
+            // 카카오 방식(documents) 또는 네이버 방식(items) 둘 다 지원하도록 처리
+            const locations = data.documents || data.items || [];
+
+            if (locations.length > 0) {
+                locations.forEach(place => {
                     addMarker(place);
                 });
-                console.log(`총 ${data.items.length}개의 장소를 찾았습니다.`);
+                console.log(`${locations.length}개의 장소를 찾았습니다.`);
             } else {
-                console.warn("지도 API에서 'items' 데이터가 없습니다.", data);
+                console.warn("표시할 장소가 없습니다. 응답 구조를 확인하세요.", data);
             }
         })
         .catch(error => {
-            console.error('Error fetching dog parks:', error);
-            alert(`지도 정보 로딩 중 오류 발생: ${error.message}`);
+            console.error('데이터 로드 중 에러 발생:', error);
         });
     }
 
-    /**
-     * 3. Naver 지도에 마커를 추가하고 인포윈도우를 설정합니다.
-     */
     function addMarker(place) {
-        // Naver 지역 검색 API는 좌표를 x(경도), y(위도)로 제공하지만,
-        // 여기서는 임시로 서울 시청 좌표를 사용합니다. 실제 좌표 변환 로직이 필요합니다.
-        const position = new naver.maps.LatLng(37.5665, 126.9780);
+        // 좌표 추출 (카카오는 x,y / 네이버는 mapx, mapy)
+        const lat = place.y || place.mapy || 37.5665;
+        const lng = place.x || place.mapx || 126.9780;
 
-        const marker = new naver.maps.Marker({
+        const position = new kakao.maps.LatLng(lat, lng);
+
+        const marker = new kakao.maps.Marker({
             map: map,
-            position: position,
-            title: place.title,
-            icon: {
-                content: `<div style="padding:5px; background:white; border:1px solid #000;">${place.title}</div>`
-            }
+            position: position
         });
 
-        // 마커 클릭 시 정보 표시
-        const infoWindow = new naver.maps.InfoWindow({
+        const title = place.place_name || place.title || "장소명 없음";
+        const address = place.road_address_name || place.address || "";
+
+        const infoWindow = new kakao.maps.InfoWindow({
             content: `
-                <div>
-                    <strong>${place.title}</strong>
-                    <p>${place.roadAddress || place.address}</p>
-                    <p>카테고리: ${place.category}</p>
+                <div style="padding:10px; min-width:150px; font-size:12px;">
+                    <strong>${title}</strong><br>
+                    <span>${address}</span>
                 </div>
             `
         });
 
-        marker.addListener('click', () => {
+        kakao.maps.event.addListener(marker, 'click', () => {
             infoWindow.open(map, marker);
         });
     }
+
+    window.onload = initMap;
 </script>
 </body>
 </html>
