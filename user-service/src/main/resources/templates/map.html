@@ -84,34 +84,42 @@
         });
     }
 
-    function addMarker(place) {
-        // 좌표 추출 (카카오는 x,y / 네이버는 mapx, mapy)
-        const lat = place.y || place.mapy || 37.5665;
-        const lng = place.x || place.mapx || 126.9780;
+function addMarker(place) {
+    const lat = place.y || place.mapy;
+    const lng = place.x || place.mapx;
+    const position = new kakao.maps.LatLng(lat, lng);
 
-        const position = new kakao.maps.LatLng(lat, lng);
+    const marker = new kakao.maps.Marker({ map: map, position: position });
 
-        const marker = new kakao.maps.Marker({
-            map: map,
-            position: position
-        });
+    const title = place.place_name || place.title;
+    const address = place.road_address_name || place.address;
+    const placeUrl = place.place_url; // 🚨 카카오 상세 페이지 URL
+    const category = place.category_name; // 예: 반려동물 > 애견운동장
 
-        const title = place.place_name || place.title || "장소명 없음";
-        const address = place.road_address_name || place.address || "";
+    const content = `
+        <div style="padding:15px; min-width:200px; border-radius:10px;">
+            <div style="margin-bottom:8px;">
+                <span style="font-size:10px; color:#888;">${category}</span>
+                <strong style="display:block; font-size:14px; color:#4CAF50;">${title}</strong>
+            </div>
+            <div style="font-size:12px; color:#555; margin-bottom:10px;">
+                ${address}
+            </div>
+            <div style="border-top:1px solid #eee; pt:8px;">
+                <a href="${placeUrl}" target="_blank"
+                   style="display:inline-block; margin-top:5px; color:#1e90ff; text-decoration:none; font-weight:bold; font-size:12px;">
+                   카카오맵에서 상세 정보 보기 →
+                </a>
+            </div>
+        </div>
+    `;
 
-        const infoWindow = new kakao.maps.InfoWindow({
-            content: `
-                <div style="padding:10px; min-width:150px; font-size:12px;">
-                    <strong>${title}</strong><br>
-                    <span>${address}</span>
-                </div>
-            `
-        });
+    const infoWindow = new kakao.maps.InfoWindow({ content: content, removable: true });
 
-        kakao.maps.event.addListener(marker, 'click', () => {
-            infoWindow.open(map, marker);
-        });
-    }
+    kakao.maps.event.addListener(marker, 'click', () => {
+        infoWindow.open(map, marker);
+    });
+}
 
     window.onload = initMap;
 </script>
