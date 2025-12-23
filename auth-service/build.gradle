@@ -16,7 +16,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
     // 임시 테스트용 인메모리 db
-     runtimeOnly 'com.h2database:h2'
+    runtimeOnly 'com.h2database:h2'
 
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 }

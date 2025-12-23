@@ -22,10 +22,10 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class) // Mockito 기능을 쓰겠다고 선언
-class AuthServiceTest {
+class StandardAuthServiceTest {
 
     @InjectMocks // 가짜 객체(Mock)들을 주입받을 "진짜" 서비스 객체
-    private AuthService authService;
+    private StandardAuthService standardAuthService;
 
     @Mock // 가짜 객체 1: DB 조회 담당
     private LoadUserPort loadUserPort;
@@ -63,7 +63,7 @@ class AuthServiceTest {
         given(tokenProviderPort.createToken(username, "USER")).willReturn(expectedToken);
 
         // when (실행)
-        String token = authService.login(requestDto);
+        String token = standardAuthService.login(requestDto);
 
         // then (검증)
         assertThat(token).isEqualTo(expectedToken); // 결과 토큰이 예상값과 같은지
@@ -83,7 +83,7 @@ class AuthServiceTest {
         given(loadUserPort.loadUser(username)).willReturn(Optional.empty());
 
         // when & then
-        assertThatThrownBy(() -> authService.login(requestDto))
+        assertThatThrownBy(() -> standardAuthService.login(requestDto))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("사용자를 찾을 수 없습니다.");
     }
@@ -111,7 +111,7 @@ class AuthServiceTest {
         given(passwordEncoder.matches(password, encodedPassword)).willReturn(false);
 
         // when & then
-        assertThatThrownBy(() -> authService.login(requestDto))
+        assertThatThrownBy(() -> standardAuthService.login(requestDto))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("비밀번호 불일치");
     }

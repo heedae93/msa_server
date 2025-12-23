@@ -6,21 +6,19 @@ import com.msa.auth.application.port.in.LoginUseCase;
 import com.msa.auth.application.port.in.RegisterUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
-public class AuthController {
+public class StandardAuthController {
 
-    // 서비스의 구체적인 이름은 몰라도 됨. "UseCase"만 있으면 됨.
+    // 서비스의 구체적인 구현체는 몰라도 됨. "UseCase"만 알면 된다.
     private final RegisterUseCase registerUseCase;
     private final LoginUseCase loginUseCase;
 
-    // 👇 4. [추가됨] 회원가입 API (실제 주소: POST /auth/signup)
+
     @PostMapping("/auth/signup")
     public ResponseEntity<String> signup(@RequestBody SignupRequestDto request) {
         registerUseCase.registerUser(request);
@@ -33,12 +31,4 @@ public class AuthController {
         return ResponseEntity.ok(Map.of("token", token));
     }
 
-    // 👇 [테스트용] 로그인한 사람만 접근 가능한 API
-    @GetMapping("/test")
-    public ResponseEntity<String> test() {
-        // 필터를 통과해서 저장된 인증 객체 꺼내기
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        return ResponseEntity.ok("인증 성공! 당신의 ID는: " + authentication.getName());
-    }
 }

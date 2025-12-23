@@ -1,7 +1,5 @@
 package com.msa.user.adapter.out.external;
 
-// ... (기존 import 생략) ...
-
 import com.msa.user.application.port.out.LoadMapDataPort;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
